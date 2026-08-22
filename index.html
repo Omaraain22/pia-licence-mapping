@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive PIA 2021 licence migration mapping template">
+  <title>PIA 2021 Licence Migration Mapping</title>
+</head>
+
+<body style="margin:0">
+
+<div id="pia-map" style="background-color:#f7f8f6;color:#172019;padding:28px 22px;min-height:600px;font-family:Inter,Arial,sans-serif">
+
+<style>
+#pia-map * {
+  box-sizing: border-box;
+}
+
+#pia-map .intro {
+  max-width: 1100px;
+  margin: 0 auto 22px;
+}
+
+#pia-map .eyebrow {
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #52705d;
+  margin-bottom: 7px;
+}
+
+#pia-map h2 {
+  font-size: clamp(22px,4vw,34px);
+  line-height: 1.12;
+  margin: 0 0 8px;
+  font-weight: 850;
+}
+
+#pia-map .sub {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #5d665f;
+  max-width: 820px;
+  margin: 0;
+}
+
+#pia-map .toolbar {
+  max-width: 1100px;
+  margin: 20px auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#pia-map button {
+  min-height: 44px;
+  border: 1px solid #ccd5ce;
+  background: white;
+  color: #172019;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 750;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#pia-map button:hover {
+  background: #edf2ee;
+}
+
+#pia-map button.active {
+  background: #173d28;
+  color: white;
+  border-color: #173d28;
+}
+
+#pia-map .board {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #d9dfda;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+#pia-map .heads {
+  display: grid;
+  grid-template-columns: 1fr 150px 1fr;
+  background: #edf2ee;
+  border-bottom: 1px solid #d9dfda;
+}
+
+#pia-map .head {
+  padding: 17px 20px;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+#pia-map .head:nth-child(2) {
+  text-align: center;
+  color: #6c776f;
+}
+
+#pia-map .maprow {
+  display: grid;
+  grid-template-columns: 1fr 150px 1fr;
+  align-items: center;
+  min-height: 132px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e5e9e6;
+}
+
+#pia-map .maprow:last-child {
+  border-bottom: 0;
+}
+
+#pia-map .stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#pia-map .lic {
+  border: 1px solid #cfd8d1;
+  background: #fafcfb;
+  border-radius: 11px;
+  padding: 11px 13px;
+  min-height: 48px;
+}
+
+#pia-map .lic.pia {
+  border-left: 4px solid #285f3d;
+}
+
+#pia-map .lic strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+#pia-map .lic span {
+  font-size: 11px;
+  color: #68726b;
+}
+
+#pia-map .middle {
+  text-align: center;
+  padding: 0 7px;
+}
+
+#pia-map .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  height: 31px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid #bdc9c0;
+  background: #f4f7f5;
+}
+
+#pia-map .arrow {
+  font-size: 26px;
+  line-height: 1;
+  margin: 6px 0;
+  color: #476653;
+}
+
+#pia-map .type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 800;
+  color: #707a73;
+}
+
+#pia-map .explain {
+  max-width: 1100px;
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 10px;
+}
+
+#pia-map .note {
+  padding: 14px;
+  border-radius: 12px;
+  background: #e9eeea;
+  border: 1px solid #d5ddd7;
+}
+
+#pia-map .note b {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+#pia-map .note span {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #626c65;
+}
+
+#pia-map .principle {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  border-left: 4px solid #285f3d;
+  padding: 12px 15px;
+  background: #eef4f0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#pia-map .hiddenRow {
+  display: none;
+}
+
+@media(max-width:700px) {
+
+  #pia-map .heads {
+    grid-template-columns: 1fr 76px 1fr;
+  }
+
+  #pia-map .head {
+    padding: 13px 8px;
+    font-size: 10px;
+  }
+
+  #pia-map .maprow {
+    grid-template-columns: 1fr 76px 1fr;
+    padding: 12px 8px;
+  }
+
+  #pia-map .lic {
+    padding: 9px 8px;
+  }
+
+  #pia-map .lic strong {
+    font-size: 11px;
+  }
+
+  #pia-map .lic span {
+    font-size: 10px;
+  }
+
+  #pia-map .badge {
+    min-width: 46px;
+    height: 27px;
+    font-size: 10px;
+  }
+
+  #pia-map .explain {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
+
+
+<div class="intro">
+
+  <div class="eyebrow">
+    Regulatory Migration Architecture
+  </div>
+
+  <h2>
+    Current Licensing Regime → PIA 2021 Licensing Regime
+  </h2>
+
+  <p class="sub">
+    Interactive template for identifying direct migrations,
+    licence consolidation, activity unbundling and wider
+    regulatory realignment. Select a relationship type to
+    isolate its migration pattern.
+  </p>
+
+</div>
+
+
+<div class="toolbar">
+
+  <button class="active" data-filter="all">
+    All Relationships
+  </button>
+
+  <button data-filter="oneone">
+    1 : 1
+  </button>
+
+  <button data-filter="manyone">
+    Many : 1
+  </button>
+
+  <button data-filter="onemany">
+    1 : Many
+  </button>
+
+  <button data-filter="manymany">
+    Many : Many
+  </button>
+
+</div>
+
+
+<div class="board">
+
+  <div class="heads">
+
+    <div class="head">
+      Current / Legacy Regime
+    </div>
+
+    <div class="head">
+      Mapping
+    </div>
+
+    <div class="head">
+      PIA 2021 Regime
+    </div>
+
+  </div>
+
+
+  <!-- 1 TO 1 -->
+
+  <div class="maprow" data-kind="oneone">
+
+    <div class="stack">
+
+      <div class="lic">
+        <strong>Existing Licence A</strong>
+        <span>Existing authorised petroleum activity</span>
+      </div>
+
+    </div>
+
+    <div class="middle">
+
+      <div class="badge">1 : 1</div>
+      <div class="arrow">→</div>
+      <div class="type">Direct Migration</div>
+
+    </div>
+
+    <div class="stack">
+
+      <div class="lic pia">
+        <strong>PIA Licence A</strong>
+        <span>Corresponding petroleum operation</span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MANY TO ONE -->
+
+  <div class="maprow" data-kind="manyone">
+
+    <div class="stack">
+
+      <div class="lic">
+        <strong>Existing Licence B</strong>
+        <span>Activity / authorisation B</span>
+      </div>
+
+      <div class="lic">
+        <strong>Existing Licence C</strong>
+        <span>Activity / authorisation C</span>
+      </div>
+
+      <div class="lic">
+        <strong>Existing Licence D</strong>
+        <span>Activity / authorisation D</span>
+      </div>
+
+    </div>
+
+    <div class="middle">
+
+      <div class="badge">M : 1</div>
+      <div class="arrow">⇢</div>
+      <div class="type">Consolidation</div>
+
+    </div>
+
+    <div class="stack">
+
+      <div class="lic pia">
+        <strong>PIA Licence B</strong>
+        <span>Single rationalised petroleum operation</span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ONE TO MANY -->
+
+  <div class="maprow" data-kind="onemany">
+
+    <div class="stack">
+
+      <div class="lic">
+        <strong>Existing Licence E</strong>
+        <span>Multiple activities bundled historically</span>
+      </div>
+
+    </div>
+
+    <div class="middle">
+
+      <div class="badge">1 : M</div>
+      <div class="arrow">⇢</div>
+      <div class="type">Unbundling</div>
+
+    </div>
+
+    <div class="stack">
+
+      <div class="lic pia">
+        <strong>PIA Licence C</strong>
+        <span>Petroleum operation C</span>
+      </div>
+
+      <div class="lic pia">
+        <strong>PIA Licence D</strong>
+        <span>Petroleum operation D</span>
+      </div>
+
+      <div class="lic pia">
+        <strong>PIA Licence E</strong>
+        <span>Petroleum operation E</span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MANY TO MANY -->
+
+  <div class="maprow" data-kind="manymany">
+
+    <div class="stack">
+
+      <div class="lic">
+        <strong>Existing Licence F</strong>
+        <span>Legacy activity grouping F</span>
+      </div>
+
+      <div class="lic">
+        <strong>Existing Licence G</strong>
+        <span>Legacy activity grouping G</span>
+      </div>
+
+    </div>
+
+    <div class="middle">
+
+      <div class="badge">M : M</div>
+      <div class="arrow">⇄</div>
+      <div class="type">Realignment</div>
+
+    </div>
+
+    <div class="stack">
+
+      <div class="lic pia">
+        <strong>PIA Licence F</strong>
+        <span>Defined petroleum operation F</span>
+      </div>
+
+      <div class="lic pia">
+        <strong>PIA Licence G</strong>
+        <span>Defined petroleum operation G</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="explain">
+
+  <div class="note">
+    <b>1 : 1 — Direct Migration</b>
+    <span>
+      Existing licence substantially corresponds
+      to one PIA licence.
+    </span>
+  </div>
+
+  <div class="note">
+    <b>M : 1 — Consolidation</b>
+    <span>
+      Multiple legacy licences collapse into a
+      single rationalised licence.
+    </span>
+  </div>
+
+  <div class="note">
+    <b>1 : M — Unbundling</b>
+    <span>
+      A broad legacy licence separates into
+      distinct PIA petroleum operations.
+    </span>
+  </div>
+
+  <div class="note">
+    <b>M : M — Realignment</b>
+    <span>
+      Legacy activities are redistributed across
+      multiple PIA licence categories.
+    </span>
+  </div>
+
+</div>
+
+
+<div class="principle">
+
+  <strong>Mapping principle:</strong>
+
+  Map the underlying authorised petroleum activity or operation,
+  not merely the historical licence title. This allows the migration
+  architecture to demonstrate how the PIA 2021 framework rationalises
+  regulatory authorisations around defined petroleum operations.
+
+</div>
+
+
+<script>
+
+const buttons = document.querySelectorAll("[data-filter]");
+const rows = document.querySelectorAll("[data-kind]");
+
+buttons.forEach(button => {
+
+  button.addEventListener("click", function() {
+
+    const selectedFilter = this.dataset.filter;
+
+    buttons.forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    this.classList.add("active");
+
+    rows.forEach(row => {
+
+      if (
+        selectedFilter === "all" ||
+        row.dataset.kind === selectedFilter
+      ) {
+
+        row.classList.remove("hiddenRow");
+
+      } else {
+
+        row.classList.add("hiddenRow");
+
+      }
+
+    });
+
+  });
+
+});
+
+</script>
+
+</div>
+
+</body>
+</html>
