@@ -43,7 +43,7 @@ button small{font-weight:600;opacity:.75;margin-left:4px}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:58px;height:31px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid var(--lic-b);background:var(--soft)}
 .arrow{font-size:26px;line-height:1;margin:6px 0;color:var(--arrow)}
 .type{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--mut)}
-.explain{margin-top:20px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.explain{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
 .note{padding:14px;border-radius:12px;background:var(--note);border:1px solid var(--note-b)}
 .note b{font-size:12px;display:block;margin-bottom:5px}
 .note span{font-size:11px;line-height:1.45;color:var(--mut)}
@@ -62,7 +62,7 @@ button small{font-weight:600;opacity:.75;margin-left:4px}
 <body>
 <div id="pia-map">
 <div class="intro">
-<div class="eyebrow">Regulatory Migration Architecture</div>
+<div class="eyebrow">NIGERIAN MIDSTREAM AND DOWNSTREAM REGULATORY LICENSES MIGRATION ARCHITECTURE</div>
 <h2>Current Licensing Regime → PIA 2021 Licensing Regime</h2>
 <p class="sub">Each of the 42 current licences, permits and approvals mapped to its PIA 2021 licence(s). Select a relationship type to isolate its migration pattern. Arrows on each current instrument show which PIA licence(s) it migrates to.</p>
 </div>
@@ -76,6 +76,7 @@ button small{font-weight:600;opacity:.75;margin-left:4px}
 <div class="note"><b>M : 1 — Consolidation</b><span>Multiple legacy licences collapse into a single rationalised licence.</span></div>
 <div class="note"><b>1 : M — Unbundling</b><span>A broad legacy licence separates into distinct PIA petroleum operations.</span></div>
 <div class="note"><b>M : M — Realignment</b><span>Legacy activities are redistributed across multiple PIA licence categories.</span></div>
+<div class="note"><b>0 : 1 — New Licence</b><span>A PIA licence with no current licence to migrate from.</span></div>
 <div class="note"><b>No PIA equivalent</b><span>No PIA licence is specified yet. Confirm the treatment of these instruments.</span></div>
 </div>
 <div class="principle"><strong>Mapping principle:</strong> Map the underlying authorised petroleum activity or operation, not merely the historical licence title. This allows the migration architecture to demonstrate how the PIA 2021 framework rationalises regulatory authorisations around defined petroleum operations.</div>
@@ -91,37 +92,38 @@ GPL:['Gas Processing Licence','GPL'],CORL:['Crude Oil Refining Licence','CORL'],
 PPDL:['Petroleum Product Distribution Licence','PPDL'],RGSL:['Retail Gas Supply Licence','RGSL']};
 const K={
 oneone:['1 : 1','→','Direct Migration','1 : 1'],manyone:['M : 1','⇢','Consolidation','Many : 1'],
-onemany:['1 : M','⇢','Unbundling','1 : Many'],manymany:['M : M','⇄','Realignment','Many : Many'],none:['M : 0','✕','No PIA Equivalent','No PIA equivalent']};
+onemany:['1 : M','⇢','Unbundling','1 : Many'],manymany:['M : M','⇄','Realignment','Many : Many'],zeroone:['0 : 1','→','New Licence','0 : 1'],none:['M : 0','✕','No PIA Equivalent','No PIA equivalent']};
 const R=[
 ['oneone',[['Domestic Gas Aggregation Licence',['DGAL']]]],
 ['oneone',[['Gas Trading and Settlement Licence',['GTP']]]],
 ['oneone',[['Lube Oil Blending Plant Licence',['PPL']]]],
 ['oneone',[['Petroleum Liquid Pipeline Licence',['PLTPL']]]],
 ['oneone',[['Gas Transporter Licence',['GTNOL']]]],
+['oneone',[['Gas Distribution Licence',['GDL']]]],
 ['manyone',[['Wholesale Gas Supply Licence',['WGSL']],['Gas Shipper Licence',['WGSL']],['Network Agent Licence',['WGSL']]]],
 ['manyone',[['Lube Storage and Sales Licence',['PPRL']],['Retail Outlet Licence (CAT B)',['PPRL']],['LPG Retailer Licence',['PPRL']],['Auto Gas Licence',['PPRL']],['LPG Add-on Licence',['PPRL']],['Auto Gas Add-Ons Licence',['PPRL']],['CAT-D Licence',['PPRL']],['LPG AutoGas Refilling Licence',['PPRL']]]],
 ['manyone',[['Petroleum Pipeline Licence (generic) (LTE)',['GTPL']],['Gas Transportation Pipeline Licence',['GTPL']]]],
 ['manyone',[['Petroleum Product Import Permit',['IMP']],['Gas Import Permit',['IMP']]]],
 ['onemany',[['Petroleum Depot Licence',['BPLSL','BGSL']]]],
-['onemany',[['Gas Distribution Licence',['GDL','PLTNOL']]]],
 ['manymany',[['Gas Processing Licence (GPL)',['GPL']],['LTO Hydrocarbon Processing Plant Licence',['CORL','GPL']],['Refining Plant Licence',['CORL']]]],
 ['manymany',[['Wholesale Petroleum Liquid Supply Licence',['WPLSL']],['Petroleum Liquid Export Licence',['WPLSL']],['Wholesale Supply Licence',['WPLSL']],['GATEX Licence',['WPLSL']],['Gas Offtake Permits',['WPLSL','PPDL']],['Industrial Storage & Utilization Licence (Propane)',['WPLSL','PPDL']],['LNG Storage & Regasification Licence',['WPLSL','RGSL']],['Product Petroleum Distribution Licence',['PPDL']],['Industrial Consumer Licence (CAT A)',['PPDL']],['LPG Plant Licence',['PPDL']],['Reticulation Licence',['PPDL']],['Telecoms & Small-Scale Gas Storage and Utilization Licence',['PPDL']],['CNG Downloading',['RGSL']],['Mini LNG Licence',['RGSL']],['CNG Compression Licence',['RGSL']]]],
+['zeroone',[],['PLTNOL']],
 ['none',[['Coastal Vessel Licence',[]],['Truck Tankers Licence',[]]]]
 ];
 const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const rowsEl=document.getElementById('rows'),bar=document.getElementById('bar');
 const counts={};
-R.forEach(([k,src])=>{
-  counts[k]=(counts[k]||0)+src.length;
-  const dst=[];src.forEach(s=>s[1].forEach(t=>{if(!dst.includes(t))dst.push(t)}));
+R.forEach(([k,src,extra])=>{
+  counts[k]=(counts[k]||0)+(src.length||(extra||[]).length);
+  const dst=extra?[...extra]:[];src.forEach(s=>s[1].forEach(t=>{if(!dst.includes(t))dst.push(t)}));
   const m=K[k],multi=src.length>1&&k==='manymany';
   const left=src.map(([n,t])=>`<div class="lic"><strong>${e(n)}</strong><span>${t.length?'→ '+t.join(' · '):'No PIA licence specified'}</span></div>`).join('');
   const right=dst.length?dst.map(t=>`<div class="lic pia"><strong>${e(P[t][0])}</strong><span>${P[t][1]||'PIA 2021 licence'}</span></div>`).join(''):'<div class="lic none"><strong>No PIA licence specified</strong><span>Treatment to be confirmed</span></div>';
   const d=document.createElement('div');d.className='maprow';d.dataset.kind=k;
-  d.innerHTML=`<div class="stack${src.length>6?' cols':''}">${left}</div><div class="middle"><div class="badge">${m[0]}</div><div class="arrow">${m[1]}</div><div class="type">${m[2]}</div></div><div class="stack">${right}</div>`;
+  d.innerHTML=`<div class="stack${src.length>6?' cols':''}">${left||'<div class="lic none"><strong>No current licence</strong><span>Newly created under PIA 2021</span></div>'}</div><div class="middle"><div class="badge">${m[0]}</div><div class="arrow">${m[1]}</div><div class="type">${m[2]}</div></div><div class="stack">${right}</div>`;
   rowsEl.appendChild(d);
 });
-const total=Object.values(counts).reduce((a,b)=>a+b,0);
+const total=Object.entries(counts).reduce((a,[k,v])=>k==='zeroone'?a:a+v,0);
 [['all','All Relationships',total],...Object.keys(K).map(k=>[k,K[k][3],counts[k]])].forEach(([f,l,c],i)=>{
   const b=document.createElement('button');b.dataset.filter=f;b.innerHTML=`${l}<small>${c}</small>`;
   if(!i)b.classList.add('active');bar.appendChild(b);
